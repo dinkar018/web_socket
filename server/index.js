@@ -6,5 +6,13 @@ server.on('connection', socket => {
         const b = Buffer.from(message)
         console.log(b.toString())
         socket.send(`${message}`)
+        broadcast(`${message}`, socket)
     })
 })
+function broadcast(message, senderSocket) {
+    server.clients.forEach((client) => {
+        if (client !== senderSocket && client.readyState === ws.OPEN) {
+            client.send(message)
+        }
+    })
+}
